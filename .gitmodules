@@ -1,0 +1,3 @@
+[submodule "stm32f0xx-gcc-setup"]
+	path = stm32f0xx-gcc-setup
+	url = https://github.com/lab11/stm32f0xx-gcc-setup
