@@ -113,15 +113,31 @@ extern "C" {
 
 /*----------- I2C1 Device -----------*/
 
+#ifndef CPAL_I2C1_SCL_GPIO_PORT
 #define CPAL_I2C1_SCL_GPIO_PORT         GPIOB
+#endif
+#ifndef CPAL_I2C1_SCL_GPIO_CLK
 #define CPAL_I2C1_SCL_GPIO_CLK          RCC_AHBPeriph_GPIOB
+#endif
+#ifndef CPAL_I2C1_SCL_GPIO_PIN
 #define CPAL_I2C1_SCL_GPIO_PIN          GPIO_Pin_6
+#endif
+#ifndef CPAL_I2C1_SCL_GPIO_PINSOURCE
 #define CPAL_I2C1_SCL_GPIO_PINSOURCE    GPIO_PinSource6
+#endif
 
+#ifndef CPAL_I2C1_SDA_GPIO_PORT
 #define CPAL_I2C1_SDA_GPIO_PORT         GPIOB
+#endif
+#ifndef CPAL_I2C1_SDA_GPIO_CLK
 #define CPAL_I2C1_SDA_GPIO_CLK          RCC_AHBPeriph_GPIOB
+#endif
+#ifndef CPAL_I2C1_SDA_GPIO_PIN
 #define CPAL_I2C1_SDA_GPIO_PIN          GPIO_Pin_7
+#endif
+#ifndef CPAL_I2C1_SDA_GPIO_PINSOURCE
 #define CPAL_I2C1_SDA_GPIO_PINSOURCE    GPIO_PinSource7
+#endif
 
 /*-----------I2C2 Device -----------*/
 
@@ -246,7 +262,9 @@ extern "C" {
 #define CPAL_I2C1_CLK                   RCC_APB1Periph_I2C1
 #define CPAL_I2C1_TXDR                  ((uint32_t)0x40005428)
 #define CPAL_I2C1_RXDR                  ((uint32_t)0x40005424)
+#ifndef CPAL_I2C1_AF
 #define CPAL_I2C1_AF                    GPIO_AF_1
+#endif
 
 #define CPAL_I2C1_DMA                   DMA1
 #define CPAL_I2C1_DMA_CLK               RCC_AHBPeriph_DMA1
