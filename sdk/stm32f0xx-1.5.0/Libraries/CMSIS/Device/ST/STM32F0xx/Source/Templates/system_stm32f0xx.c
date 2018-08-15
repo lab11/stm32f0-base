@@ -284,16 +284,16 @@ void SystemCoreClockUpdate (void)
 static void SetSysClock(void)
 {
   __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
-  
+
   /* SYSCLK, HCLK, PCLK configuration ----------------------------------------*/
-  /* Enable HSE */    
+  /* Enable HSE */
   RCC->CR |= ((uint32_t)RCC_CR_HSEON);
- 
+
   /* Wait till HSE is ready and if Time out is reached exit */
   do
   {
     HSEStatus = RCC->CR & RCC_CR_HSERDY;
-    StartUpCounter++;  
+    StartUpCounter++;
   } while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
 
   if ((RCC->CR & RCC_CR_HSERDY) != RESET)
@@ -303,23 +303,37 @@ static void SetSysClock(void)
   else
   {
     HSEStatus = (uint32_t)0x00;
-  }  
+  }
 
   if (HSEStatus == (uint32_t)0x01)
   {
     /* Enable Prefetch Buffer and set Flash Latency */
     FLASH->ACR = FLASH_ACR_PRFTBE | FLASH_ACR_LATENCY;
- 
+
     /* HCLK = SYSCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;
-      
+
     /* PCLK = HCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE_DIV1;
 
     /* PLL configuration = HSE * 6 = 48 MHz */
     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
-    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLMULL6);
-            
+
+    // Scale PLL correctly to achieve 48 MHz
+    if (HSE_VALUE == 8000000) {
+      // Default setting: 8 MHz
+      RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLMULL6);
+    } else if (HSE_VALUE == 16000000) {
+      // 16 MHz
+      RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLMULL3);
+    } else if (HSE_VALUE == 24000000) {
+      // 24 MHz
+      RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLMULL2);
+    } else {
+      // Default
+      RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLMULL6);
+    }
+
     /* Enable PLL */
     RCC->CR |= RCC_CR_PLLON;
 
@@ -330,7 +344,7 @@ static void SetSysClock(void)
 
     /* Select PLL as system clock source */
     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_SW));
-    RCC->CFGR |= (uint32_t)RCC_CFGR_SW_PLL;    
+    RCC->CFGR |= (uint32_t)RCC_CFGR_SW_PLL;
 
     /* Wait till PLL is used as system clock source */
     while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != (uint32_t)RCC_CFGR_SWS_PLL)
